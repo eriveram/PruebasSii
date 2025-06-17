@@ -1,0 +1,26 @@
+resources:
+  repositories:
+  - repository: self
+  - repository: qa-devops-pipeline-templates
+    type: git
+    name: BP-DevOps-Infrastructure/common-pipeline-template-sqa
+    ref: master
+
+trigger:
+  - master
+
+parameters:
+  - name: SCRIPT_NAME_INPUT
+    displayName: 'Ingrese el nombre del script a ejecutar'
+    type: string
+    default: ""
+
+variables:
+  - group: sqa-cross-generico
+  - group: sqa-cross-arq-k6
+
+stages:
+  - template: performance/k6/init.yml@qa-devops-pipeline-templates
+    parameters:
+      SCRIPT_NAME_INPUT: ${{parameters.SCRIPT_NAME_INPUT}}
+      TEST_EXTRA_PARAMETERS: '-e SCRIPT_NAME=${{parameters.SCRIPT_NAME_INPUT}}'
